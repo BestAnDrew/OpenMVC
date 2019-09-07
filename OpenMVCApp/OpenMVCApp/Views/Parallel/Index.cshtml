@@ -40,30 +40,7 @@
     <h2>@ViewData["timer1"]</h2>
     <h2>@ViewData["timer2"]</h2>
     <h2>@ViewData["timer3"]</h2>
-
-    <div style="height:300px; width:100%">
-
-        <div style="margin-left:100px;margin-top:50px;">
-
-            <h2>@ViewData["timer3"]</h2><br />
-            <button onclick="debugger;alert('1'); $.ajax({ url: '/Parallel/executeClick_Sync', success: function (data) { }, async: false });" style="height: 25px; width: 75px;margin-top:35px;"></button>
-            <input id="submitButton1" type="button" style="height: 25px; width: 75px;margin-top:35px;" value="submit1">
-
-        </div>
-
-    </div>
-
-    <div style="height:300px; width:100%">
-
-        <div style="margin-left:100px;margin-top:50px;">
-
-            <h2>@ViewData["timer3"]</h2><br />
-            <text style="height: 200px; width: 200px;margin-top:35px;">@ViewData["timer3"]</text>
-            <input id="submitButton2" type="button" style="height: 25px; width: 75px;margin-top:35px;" value="submit2">
-
-        </div>
-
-    </div>
+    <h2>@ViewData["timer4"]</h2>
 </body>
 
 </html>

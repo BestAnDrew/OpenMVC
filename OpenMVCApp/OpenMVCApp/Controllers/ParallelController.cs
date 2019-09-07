@@ -39,11 +39,7 @@ namespace OpenMVCApp.Controllers
             timer.Stop();
             ViewData["timer2"] = timer.Elapsed;
 
-            return View();
-        }
 
-        public ActionResult executeClick_sync()
-        {
             var timer3 = new Stopwatch();
             timer3.Start();
 
@@ -51,10 +47,23 @@ namespace OpenMVCApp.Controllers
 
             timer3.Stop();
 
-            ViewData["timer3"] += timer3.ElapsedMilliseconds.ToString();
+            ViewData["timer3"] += $"total Execution time:{timer3.ElapsedMilliseconds.ToString()}";
+
+            timer3.Reset();
+
+            timer3.Start();
+
+            await RunDownloadWebAsync();
+
+            timer3.Stop();
+
+            ViewData["timer4"] += $"total Execution time:{timer3.ElapsedMilliseconds.ToString()}";
+
+
 
             return View();
         }
+
 
         private void RunDownloadWebSync()
         {
@@ -88,25 +97,57 @@ namespace OpenMVCApp.Controllers
             ls.Add("https://www.baidu.com");
             ls.Add("https://www.google.com");
             ls.Add("https://www.Microsoft.com");
+            ls.Add("https://www.codeproject.com");
+            ls.Add("https://www.yahoo.com");
+            ls.Add("https://www.Github.com");
             return ls;
         }
 
-        private static void RunDownloadWebAsync()
+        private async Task RunDownloadWebAsync()
         {
+            List<String> websiteCollection = getWebSiteAsync();
+            List<Task<WebSiteDataModel>> tastks = new List<Task<WebSiteDataModel>>();
 
+            foreach (var ws in websiteCollection)
+            {
+                tastks.Add(Task.Run(() => getWebSiteDataAsync(ws)));
+            }
+
+            var results = await Task.WhenAll(tastks);
+
+            foreach (var items in results)
+            {
+                ReportWebSiteInfoAsync(items);
+            }
         }
 
-        private void executeClick_Async()
+        private async Task<WebSiteDataModel> getWebSiteDataAsync(String ws)
         {
-            var timer3 = new Stopwatch();
-            timer3.Start();
+            WebSiteDataModel wdsm = new WebSiteDataModel();
 
-            RunDownloadWebAsync();
+            WebClient wc = new WebClient();
+            wdsm.WebSiteUri = ws;
+            wdsm.WebSiteData = await wc.DownloadStringTaskAsync(new Uri(ws));
 
-            timer3.Stop();
-
-            ViewData["timer3"] = timer3.Elapsed;
+            return wdsm;
         }
+
+        public void ReportWebSiteInfoAsync(WebSiteDataModel wsd)
+        {
+            ViewData["timer4"] += $"{wsd.WebSiteUri} downloaded :{wsd.WebSiteData.Length} characters long.{Environment.NewLine}";
+        }
+        private List<String> getWebSiteAsync()
+        {
+            List<String> ls = new List<string>();
+            ls.Add("https://www.baidu.com");
+            ls.Add("https://www.google.com");
+            ls.Add("https://www.Microsoft.com");
+            ls.Add("https://www.codeproject.com");
+            ls.Add("https://www.yahoo.com");
+            ls.Add("https://www.Github.com");
+            return ls;
+        }
+
 
         public async static Task<String> Encrypt(String input = "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTest")
         {
